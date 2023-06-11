@@ -1,7 +1,4 @@
-
-
 const About = () => {
-  
   return <div>Đây là about</div>;
 };
 
