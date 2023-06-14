@@ -24,6 +24,46 @@ const Home = () => {
   let [country, setCountry] = useState("USA");
   let [check, setCheck] = useState(false);
   let [listInfo, setListInfor] = useState([]);
+  let [pagingtion, setPagingtion] = useState(1);
+
+  let [bien1, setBien1] = useState(0);
+  let [bien2, setBien2] = useState(0);
+
+  const create = () => {
+    // gọi API thêm ở backend
+    // sau đó
+    // return result - giá trị trả về từ phía backend: response // false : thêm thất bại, true: thành công
+    setResult(true);
+  };
+
+  const handleClickBien2 = () => {
+    setBien2(bien2 + 1);
+  };
+
+  let [result, setResult] = useState(false);
+
+  const handleClickBien1 = () => {
+    setBien1(bien1 + 1);
+  };
+
+  // useEffect(() => {
+  //   console.log("Tăng biến 1 thành công");
+  //   console.log("Tăng biến 2 thành công");
+  //   console.log("Chạy 1 lần");
+  // }, []); // chỉ gọi 1 lần
+
+  // useEffect(() => {
+  //   console.log("Tăng biến 1 thành công");
+  //   console.log("Tăng biến 2 thành công");
+  // }, [bien1, bien2]); // 1 trong 2 thay đổi mới gọi
+
+  // useEffect(() => {
+  //   console.log("Tăng biến 1 thành công");
+  // }, [bien1]); // biến 1 thay đổi mới gọi
+
+  // useEffect(() => {
+  //   console.log("Tăng biến 2 thành công");
+  // }, [bien2]); // biến 2 thay đổi mới gọi
 
   const loadDataToTable = () => {
     let array = [
@@ -72,19 +112,19 @@ const Home = () => {
   // useEffect có truyền vào biến, thì biến có thay đổi, sẽ gọi lại code trong useEffect
   // useEffect ko truyền vào biến, thì mặc định là nó sẽ theo dõi tất cả các state
 
-  // useEffect liên quan đến tối ưu việc render lại componenrt , useEffect ko truyền vào biến mặc định load lại 
+  // useEffect liên quan đến tối ưu việc render lại componenrt , useEffect ko truyền vào biến mặc định load lại
   // khi có bất kì state nào được cập nhật // về mặt tối ưu: không
 
   //  useEffect có truyền vào biến, chỉ load lại code, logic trong useEffect khi mà cái biến truyền vào thhay đổi
   // ví dụ: khi thay đổi state A chỉ muốn load lại dữ liệu của A, thì dùng useEffect có truyền vào biến
-  
+
   useEffect(() => {
     loadDataToTable();
   }, [listInfo]);
 
-  useEffect(() => {
-    console.log("count vừa thay đổi");
-  }, [count]);
+  // useEffect(() => {
+  //   console.log("count vừa thay đổi");
+  // }, [count]);
 
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
@@ -233,8 +273,10 @@ const Home = () => {
 
   return (
     <div className="test">
-      <span>{count}</span>
-      <button onClick={clickCount}>Increase</button>
+      <span>{bien1}</span>
+      <button onClick={handleClickBien1}>Biến 1</button>
+      <span>{bien2}</span>
+      <button onClick={handleClickBien2}>Biến 2</button>
       <Form form={form} onFinish={onFinish}>
         <Form.Item label="Name" rules={[{ required: true }]}>
           <Input value={name} onChange={(e) => setName(e.target.value)} />
