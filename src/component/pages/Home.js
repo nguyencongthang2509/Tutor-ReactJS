@@ -235,6 +235,7 @@ const Home = () => {
 
   const handleDelete = (id) => {
     // C1: thao tác trực tiếp trên mảng: list cũ: 1, 2, 3 // list.splice(3)
+    
     // C2: Tạo ra list mớilist mới : 1, 2
 
     let updatedListInfo = listInfo.filter((record) => record.id !== id);

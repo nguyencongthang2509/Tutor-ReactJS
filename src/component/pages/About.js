@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { apiURLNhanVien, apiURLCuaHang } from "../../config/api";
+import Home from "./Home";
 
 const About = () => {
   let [listNhanVien, setListNhanVien] = useState([]);
@@ -25,6 +26,11 @@ const About = () => {
   let [currentPage, setCurrentPage] = useState(0);
   let [totalPages, setToTalPages] = useState(0);
 
+  // useRef
+  // useCallBack
+  // useReducer
+  // useMomo
+
   useEffect(() => {
     loadDataListNhanVien(currentPage);
   }, [currentPage]);
@@ -37,6 +43,7 @@ const About = () => {
     axios
       .get(apiURLNhanVien + "/show?pageNo=" + currentPage)
       .then((response) => {
+        console.log(response.data.content);
         setListNhanVien(response.data.content);
         setCurrentPage(response.data.number);
         setToTalPages(response.data.totalPages);
@@ -66,16 +73,123 @@ const About = () => {
     let obj = {
       ma: ma,
       ten: ten,
+      gioiTinh: gioiTinh,
+      sdt: sdt,
+      diaChi: diaChi,
+      idCH: idCuaHang,
+    };
 
-    }
     axios
-      .get(apiURLCuaHang)
+      .post(apiURLNhanVien + "/add", obj)
       .then((response) => {
-        setListCuaHang(response.data);
-        setIdCuaHang(listCuaHang[0].id);
+        // Cách 1: gọi lại API load list từ database
+        // loadDataListNhanVien(0);
+        // Cách 2: Nhận kết quả trả về từ backend, thêm / sửa / xóa ngay trên list
+
+        // list chứa đối tượng có 3 thuộc tính A B C thì đối tượng mình định thêm mới cũng phải có bấy nhiêu thuộc tính
+        // điều kiện:
+        // thêm: phải có đầy đủ đối tượng mới
+        // update: phải có đầy đủ đối tượng mới
+        // detail: id | cả đối tượng
+        // delete: id
+
+        let res = response.data;
+        let newNhanVienResponse = {
+          diaChi: res.diaChi,
+          gioiTinh: res.gioiTinh,
+          id: res.id,
+          idCuaHang: res.cuaHang.id,
+          ma: res.ma,
+          sdt: res.sdt,
+          ten: res.ten,
+          tenCuaHang: res.cuaHang.ten,
+        };
+
+        setListNhanVien([newNhanVienResponse, ...listNhanVien]);
+      })
+      .catch((error) => {
+        alert("Thêm thất bại");
+      });
+  };
+
+  const detail = (id) => {
+    axios
+      .get(apiURLNhanVien + "/detail/" + id)
+      .then((response) => {
+        let obj = response.data;
+        setMa(obj.ma);
+        setTen(obj.ten);
+        setGioiTinh(obj.gioiTinh);
+        setDiaChi(obj.diaChi);
+        setSdt(obj.sdt);
+        setMa(obj.ma);
+        setIdCuaHang(obj.cuaHang == null ? "" : obj.cuaHang.id);
       })
       .catch((error) => {});
-  }
+  };
+
+  const funcDelete = (id) => {
+    axios
+      .delete(apiURLNhanVien + "/delete/" + id)
+      .then((response) => {
+        let id = response.data;
+        listNhanVien.forEach((item) => {
+          if (item.id === id) {
+            let updatedListNhanVien = listNhanVien.filter(
+              (record) => record.id !== id
+            );
+            setListNhanVien(updatedListNhanVien);
+            alert("Xóa thành công");
+          }
+        });
+      })
+      .catch((error) => {});
+  };
+
+  const update = (id) => {
+    let obj = {
+      ma: ma,
+      ten: ten,
+      gioiTinh: gioiTinh,
+      sdt: sdt,
+      diaChi: diaChi,
+      idCH: idCuaHang,
+    };
+
+    axios
+      .put(apiURLNhanVien + "/update/" + id, obj)
+      .then((response) => {
+        let res = response.data;
+        let newNhanVienResponse = {
+          diaChi: res.diaChi,
+          gioiTinh: res.gioiTinh,
+          id: res.id,
+          idCuaHang: res.cuaHang.id,
+          ma: res.ma,
+          sdt: res.sdt,
+          ten: res.ten,
+          tenCuaHang: res.cuaHang.ten,
+        };
+
+        listNhanVien.forEach((item) => {
+          if (item.id === res.id) {
+            let updatedListNhanVien = listNhanVien.map((record) => {
+              if (record.id === id) {
+                return { ...record, ...newNhanVienResponse };
+              }
+              return record;
+            });
+
+            setListNhanVien(updatedListNhanVien);
+          }
+        });
+
+        alert("Cập nhật thành công");
+      })
+      .catch((error) => {
+        alert("Cập nhật thất bại");
+      });
+  };
 
   const columns = [
     {
@@ -115,13 +229,34 @@ const About = () => {
       key: "actions",
       render: (text, record) => (
         <Space>
-          <Button key="detail" type="primary" htmlType="submit">
+          <Button
+            key="detail"
+            onClick={() => {
+              detail(record.id);
+            }}
+            type="primary"
+            htmlType="submit"
+          >
             Detail
           </Button>
-          <Button key="update" type="primary" htmlType="submit">
+          <Button
+            key="update"
+            onClick={() => {
+              update(record.id);
+            }}
+            type="primary"
+            htmlType="submit"
+          >
             Update
           </Button>
-          <Button key="delete" type="primary" htmlType="submit">
+          <Button
+            key="delete"
+            onClick={() => {
+              funcDelete(record.id);
+            }}
+            type="primary"
+            htmlType="submit"
+          >
             Delete
           </Button>
         </Space>
@@ -134,7 +269,7 @@ const About = () => {
       <Form>
         <Form.Item label="Mã" rules={[{ required: true }]}>
           <Input
-          placeholder="Nhập mã"
+            placeholder="Nhập mã"
             value={ma}
             onChange={(e) => {
               setMa(e.target.value);
@@ -196,7 +331,7 @@ const About = () => {
           </Select>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button onClick={addNhanVien} type="primary" htmlType="submit">
             Add
           </Button>
         </Form.Item>
