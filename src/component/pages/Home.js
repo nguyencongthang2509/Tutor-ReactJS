@@ -117,6 +117,9 @@ const Home = () => {
 
   //  useEffect có truyền vào biến, chỉ load lại code, logic trong useEffect khi mà cái biến truyền vào thhay đổi
   // ví dụ: khi thay đổi state A chỉ muốn load lại dữ liệu của A, thì dùng useEffect có truyền vào biến
+  useEffect(() => {
+    loadDataToTable();
+  }, []);
 
   useEffect(() => {
     loadDataToTable();
@@ -235,7 +238,7 @@ const Home = () => {
 
   const handleDelete = (id) => {
     // C1: thao tác trực tiếp trên mảng: list cũ: 1, 2, 3 // list.splice(3)
-    
+
     // C2: Tạo ra list mớilist mới : 1, 2
 
     let updatedListInfo = listInfo.filter((record) => record.id !== id);
@@ -271,7 +274,7 @@ const Home = () => {
   const findRecordById = (id) => {
     return listInfo.find((item) => item.id === id);
   };
-
+ 
   return (
     <div className="test">
       <span>{bien1}</span>
