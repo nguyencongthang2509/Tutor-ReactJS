@@ -12,6 +12,9 @@ export const SideBar = () => {
           <li>
             <Link to="/about">About</Link>
           </li>
+          <li>
+            <Link to="/crud">CRUD</Link>
+          </li>
         </ul>
       </nav>
     </div>

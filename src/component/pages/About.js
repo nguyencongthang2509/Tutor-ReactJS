@@ -14,12 +14,13 @@ import axios from "axios";
 import { apiURLNhanVien, apiURLCuaHang } from "../../config/api";
 import Home from "./Home";
 import { useAppDispatch, useAppSelector } from "../app/hook";
+import "./home.css"
 import {
   GetListNhanVien,
   SetListNhanVien,
 } from "../app/reducer/AboutSlice.reducer";
 
-const About = () => {
+const About = ({ id, abc }) => {
   let [ma, setMa] = useState("");
   let [ten, setTen] = useState("");
   let [gioiTinh, setGioiTinh] = useState("Nam");
@@ -291,8 +292,8 @@ const About = () => {
           <Input
             placeholder="Nhập mã"
             value={ma}
-            onChange={(e) => {
-              setMa(e.target.value);
+            onChange={(event) => {
+              setMa(event.target.value);
             }}
           />
         </Form.Item>
@@ -327,8 +328,8 @@ const About = () => {
         <Form.Item label="Địa chỉ" rules={[{ required: true }]}>
           <Select
             value={diaChi}
-            onChange={(e) => {
-              setDiaChi(e);
+            onChange={(event) => {
+              setDiaChi(event);
             }}
           >
             <Select.Option value="Thái Bình">Thái Bình</Select.Option>
